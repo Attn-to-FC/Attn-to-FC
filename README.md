@@ -70,7 +70,7 @@ The only necessary input to predict.py on the command line is the model file.  O
 /nfs/projects/attn-to-fc/data/outdir/predictions/predict-ast-attendgru-fc_E07_1565109688.txt
 
 Note that CPU prediction is possible in principle, but by default all the models use CuDNNGRU instead of standard GRU, which necessitates using a GPU during prediction.
-It is important to note that the data argument needs to be the same between running train.py and test.py
+It is important to note that the data argument needs to be the same between running train.py and test.py.
 The ICSE'20 submission versions (prediction files) are all included in the predictions directory in this repository.
 
 ### Step 4: Vizualization
@@ -79,7 +79,7 @@ The ICSE'20 submission versions (prediction files) are all included in the predi
 you@server:~/dev/attn-to-fc$ time python3 my_get_activations.py /nfs/projects/attn-to-fc/data/outdir/models/ast-attendgru-fc_E07_1565109688.h5 /nfs/projects/attn-to-fc/data/outdir/models/ast-attendgru_E04_1554124260.h5 --fid=26052502
 ```
 
-This will output all the activation map of the attention matrix in ast-attendgru-fc as well as the ast-attendgru matrix. This is designed to allow comoparison between models that only differ with the addition of file context information.
+This will output all the activation map of the attention matrix in ast-attendgru-fc as well as the ast-attendgru matrix. This is designed to allow comparison between models that only differ with the addition of file context information.
 It takes 2 models files as input, the first is the model with file context information while the second is the model without file context information. It also takes the function id (fid) as input.
 Currently this can be run for only 1 fid at a time.
 
