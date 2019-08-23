@@ -39,19 +39,19 @@ you@server:~/dev/attn-to-fc$ time python3 train.py --model-type=ast-attendgru-fc
 ```
 
 Model types are defined in model.py. 
-The attendgru and ast-attendgru model used was borrowed from the work of LeClair et al. We thank them for making their code open source and their repository accessible to everyone.
-Alexander LeClair, Siyuan Jiang, and Collin McMillan. 2019. A neural model for generating natural language summaries of program subroutines. InProceedings of the 41st International Conference on Software Engineering. IEEE Press, 795–806.
+The attendgru and ast-attendgru model used was borrowed from the work of LeClair et al. We thank them for making their code open source and their repository accessible to everyone.<br />
+Alexander LeClair, Siyuan Jiang, and Collin McMillan. 2019. A neural model for generating natural language summaries of program subroutines. InProceedings of the 41st International Conference on Software Engineering. IEEE Press, 795–806.<br />
 https://arxiv.org/abs/1902.01954
 
 Their github repository link:
 https://github.com/mcmillco/funcom
 
-The graph2seq model was our faithful reimplementation of Xu et. al.
-Kun Xu, Lingfei Wu, Zhiguo Wang, Yansong Feng, Michael Witbrock, and Vadim Sheinin. 2018.  Graph2seq: Graph to sequence learning with attention-based neural networks. Conference on Empirical Methods in Natural Language Processing(2018).
+The graph2seq model was our faithful reimplementation of Xu et. al. <br />
+Kun Xu, Lingfei Wu, Zhiguo Wang, Yansong Feng, Michael Witbrock, and Vadim Sheinin. 2018.  Graph2seq: Graph to sequence learning with attention-based neural networks. Conference on Empirical Methods in Natural Language Processing(2018).<br />
 https://arxiv.org/abs/1804.00823
 
-The code2seq model was our faithful reimplementation of Alon et al.
-Uri Alon, Shaked Brody, Omer Levy, and Eran Yahav. 2019. code2seq: Generating sequences from structured representations of code. International Conference on Learning Representations(2019).
+The code2seq model was our faithful reimplementation of Alon et al.<br />
+Uri Alon, Shaked Brody, Omer Levy, and Eran Yahav. 2019. code2seq: Generating sequences from structured representations of code. International Conference on Learning Representations(2019).<br />
 https://arxiv.org/abs/1808.01400
 
 For all these models, we added file context information to implement our own custom models. These models can be found in models/attendgru_fc.py, models/atfilecont.py, models/graph2seq_fc.py and models/code2seq_fc.py
@@ -84,8 +84,8 @@ The only necessary input to predict.py on the command line is the model file.  O
 
 /nfs/projects/attn-to-fc/data/outdir/predictions/predict-ast-attendgru-fc_E07_1565109688.txt
 
-Note that by default all the models use CuDNNGRU instead of standard GRU, so using a GPU is necessary during prediction.
-It is important to note that the data argument needs to be the same between running train.py and test.py.
+Note that by default all the models use CuDNNGRU instead of standard GRU, so using a GPU is necessary during prediction.<br />
+It is important to note that the data argument needs to be the same between running train.py and test.py.<br />
 The ICSE'20 submission versions (prediction files) are all included in the predictions directory in this repository.
 
 Note that predictions/predict-ast-attendgru_E08_1566229103.txt and predictions/predict-ast-attendgru-fc_E06_1566229294.txt were the predictions obtained from the ablation study.
@@ -96,8 +96,8 @@ Note that predictions/predict-ast-attendgru_E08_1566229103.txt and predictions/p
 you@server:~/dev/attn-to-fc$ time python3 my_get_activations.py /nfs/projects/attn-to-fc/data/outdir/models/ast-attendgru-fc_E07_1565109688.h5 /nfs/projects/attn-to-fc/data/outdir/models/ast-attendgru_E04_1554124260.h5 --fid=26052502
 ```
 
-This will output all the activation map of the attention matrix in ast-attendgru-fc as well as the ast-attendgru matrix. This is designed to allow comparison between models that only differ with the addition of file context information.
-It takes 2 models files as input, the first is the model with file context information while the second is the model without file context information. It also takes the function id (fid) as input.
+This will output all the activation map of the attention matrix in ast-attendgru-fc as well as the ast-attendgru matrix. This is designed to allow comparison between models that only differ with the addition of file context information.<br />
+It takes 2 models files as input, the first is the model with file context information while the second is the model without file context information. It also takes the function id (fid) as input.<br />
 Currently this can be run for only 1 fid at a time.
 
 ```console
