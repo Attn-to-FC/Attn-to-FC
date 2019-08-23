@@ -65,7 +65,7 @@ This will output the list of input arguments that can be passed via the command 
 you@server:~/dev/attn-to-fc$ time python3 predict.py /nfs/projects/attn-to-fc/data/outdir/models/ast-attendgru-fc_E07_1565109688.h5 --gpu=0
 ```
 
-The only necessary input to predict.py on the command line is the model file, but configuration information is read from the pkl files mentioned above.  Output predictions will be written to a file e.g.:
+The only necessary input to predict.py on the command line is the model file.  Output predictions will be written to a file e.g.:
 
 /nfs/projects/attn-to-fc/data/outdir/predictions/predict-ast-attendgru-fc_E07_1565109688.txt
 
