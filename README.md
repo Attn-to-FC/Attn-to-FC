@@ -39,7 +39,7 @@ To be consistent with defaults, create the following directories:
 you@server:~/dev/attn-to-fc$ time python3 train.py --model-type=ast-attendgru-fc --gpu=0
 ```
 
-Model types are defined in model.py.  The ICSE'20 submission versions (model files, prediction files, configuration files and history files) are all included in the data directory in this repository.  The 10 digit integer at the end of the file is the epoch time at which training started, and is used to connect model, prediction, configuration and history data.  For example, training ast-attendgru-fc to epoch 8 would produce:
+Model types are defined in model.py. The 10 digit integer at the end of the file is the epoch time at which training started, and is used to connect model, prediction, configuration and history data.  For example, training ast-attendgru-fc to epoch 8 would produce:
 
 /nfs/projects/attn-to-fc/data/outdir/histories/ast-attendgru-fc_conf_1565109688.pkl  
 /nfs/projects/attn-to-fc/data/outdir/histories/ast-attendgru-fc_hist_1565109688.pkl  
@@ -71,6 +71,7 @@ The only necessary input to predict.py on the command line is the model file, bu
 
 Note that CPU prediction is possible in principle, but by default all the models use CuDNNGRU instead of standard GRU, which necessitates using a GPU during prediction.
 It is important to note that the data argument needs to be the same between running train.py and test.py
+The ICSE'20 submission versions (prediction files) are all included in the predictions directory in this repository.
 
 ### Step 4: Vizualization
 
