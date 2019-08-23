@@ -20,18 +20,17 @@ Check out the readme file in the Transformer directory on the requirements to ru
 ### Step 1: Obtain Dataset
 
 We use the dataset of 2.1m Java methods and method comments, already cleaned and separated into training/val/test sets by LeClair et al.
-LeClair, A., McMillan, C., "Recommendations for Datasets for Source Code Summarization", in Proc. of the 2019 Annual Conference of the North American Chapter of the Association for Computational Linguistics (NAACL'19), Short Research Paper Track, Minneapolis, USA, June 2-7, 2019.
 
-(The raw data is available here: http://leclair.tech/data/funcom/)  
+(Their raw data was downloaded from: http://leclair.tech/data/funcom/)  
 
 Extract the dataset to a directory (/nfs/projects/ is the assumed default) so that you have a directory structure:  
-/nfs/projects/attn-to-fc/data/standard/dataset.pkl  
-etc. in accordance with the files described on the site above.
+/nfs/projects/attn-to-fc/data/standard/dataset.pkl.
 
 To be consistent with defaults, create the following directories:  
 /nfs/projects/attn-to-fc/data/outdir/models/  
 /nfs/projects/attn-to-fc/data/outdir/histories/  
 /nfs/projects/attn-to-fc/data/outdir/predictions/  
+/nfs/projects/attn-to-fc/data/outdir/viz/
 
 ### Step 2: Train a Model
 
@@ -39,7 +38,24 @@ To be consistent with defaults, create the following directories:
 you@server:~/dev/attn-to-fc$ time python3 train.py --model-type=ast-attendgru-fc --gpu=0
 ```
 
-Model types are defined in model.py. The 10 digit integer at the end of the file is the epoch time at which training started, and is used to connect model, prediction, configuration and history data.  For example, training ast-attendgru-fc to epoch 8 would produce:
+Model types are defined in model.py. 
+The attendgru and ast-attendgru model used was borrowed from the work of LeClair et al. We thank them for making their code open source and their repository accessible to everyone.
+Alexander LeClair, Siyuan Jiang, and Collin McMillan. 2019. A neural model for generating natural language summaries of program subroutines. InProceedings of the 41st International Conference on Software Engineering. IEEE Press, 795–806
+https://arxiv.org/abs/1902.01954
+Their github repository link:
+https://github.com/mcmillco/funcom
+
+The graph2seq model was our faithful reimplementation of Xu et. al.
+Kun Xu, Lingfei Wu, Zhiguo Wang, Yansong Feng, Michael Witbrock, and Vadim Sheinin. 2018.  Graph2seq: Graph to sequence learning with attention-based neural networks. Conference on Empirical Methods in Natural Language Processing(2018)
+https://arxiv.org/abs/1804.00823
+
+The code2seq model was our faithful reimplementation of Alon et al.
+Uri Alon, Shaked Brody, Omer Levy, and Eran Yahav. 2019. code2seq: Generating sequences from structured representations of code. International Conference on Learning Representations(2019)
+https://arxiv.org/abs/1808.01400
+
+For all these models, we added file context information to implement our own custom models. These models can be found in models/attendgru_fc.py, models/atfilecont.py, models/graph2seq_fc.py and models/code2seq_fc.py
+
+The 10 digit integer at the end of the file is the epoch time at which training started, and is used to connect model, prediction, configuration and history data.  For example, training ast-attendgru-fc (model found in models/atfilecont.py) to epoch 8 would produce:
 
 /nfs/projects/attn-to-fc/data/outdir/histories/ast-attendgru-fc_conf_1565109688.pkl  
 /nfs/projects/attn-to-fc/data/outdir/histories/ast-attendgru-fc_hist_1565109688.pkl  
@@ -51,8 +67,6 @@ Model types are defined in model.py. The 10 digit integer at the end of the file
 /nfs/projects/attn-to-fc/data/outdir/models/ast-attendgru-fc_E06_1565109688.h5  
 /nfs/projects/attn-to-fc/data/outdir/models/ast-attendgru-fc_E07_1565109688.h5  
 /nfs/projects/attn-to-fc/data/outdir/models/ast-attendgru-fc_E08_1565109688.h5 
-
-A good baseline for initial work is the attendgru model.  It trains relatively quickly: about 45 minutes per epoch using batch size 200 on a single Quadro P5000.
 
 ```console
 you@server:~/dev/attn-to-fc$ time python3 train.py --model-type=ast-attendgru-fc --gpu=0 --help
@@ -69,9 +83,11 @@ The only necessary input to predict.py on the command line is the model file.  O
 
 /nfs/projects/attn-to-fc/data/outdir/predictions/predict-ast-attendgru-fc_E07_1565109688.txt
 
-Note that CPU prediction is possible in principle, but by default all the models use CuDNNGRU instead of standard GRU, which necessitates using a GPU during prediction.
+Note that by default all the models use CuDNNGRU instead of standard GRU, so using a GPU is necessary during prediction.
 It is important to note that the data argument needs to be the same between running train.py and test.py.
 The ICSE'20 submission versions (prediction files) are all included in the predictions directory in this repository.
+
+Note that predictions/predict-ast-attendgru_E08_1566229103.txt and predictions/predict-ast-attendgru-fc_E06_1566229294.txt were the predictions obtained from the ablation study.
 
 ### Step 4: Vizualization
 
