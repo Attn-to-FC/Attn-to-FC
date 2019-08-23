@@ -41,16 +41,21 @@ you@server:~/dev/attn-to-fc$ time python3 train.py --model-type=ast-attendgru-fc
 Model types are defined in model.py. 
 The attendgru and ast-attendgru model used was borrowed from the work of LeClair et al. We thank them for making their code open source and their repository accessible to everyone.
 Alexander LeClair, Siyuan Jiang, and Collin McMillan. 2019. A neural model for generating natural language summaries of program subroutines. InProceedings of the 41st International Conference on Software Engineering. IEEE Press, 795–806
+
 https://arxiv.org/abs/1902.01954
+
 Their github repository link:
+
 https://github.com/mcmillco/funcom
 
 The graph2seq model was our faithful reimplementation of Xu et. al.
 Kun Xu, Lingfei Wu, Zhiguo Wang, Yansong Feng, Michael Witbrock, and Vadim Sheinin. 2018.  Graph2seq: Graph to sequence learning with attention-based neural networks. Conference on Empirical Methods in Natural Language Processing(2018)
+
 https://arxiv.org/abs/1804.00823
 
 The code2seq model was our faithful reimplementation of Alon et al.
 Uri Alon, Shaked Brody, Omer Levy, and Eran Yahav. 2019. code2seq: Generating sequences from structured representations of code. International Conference on Learning Representations(2019)
+
 https://arxiv.org/abs/1808.01400
 
 For all these models, we added file context information to implement our own custom models. These models can be found in models/attendgru_fc.py, models/atfilecont.py, models/graph2seq_fc.py and models/code2seq_fc.py
