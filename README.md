@@ -32,6 +32,8 @@ To be consistent with defaults, create the following directories:
 /nfs/projects/attn-to-fc/data/outdir/predictions/  
 /nfs/projects/attn-to-fc/data/outdir/viz/
 
+If you choose to have a different directory structure, please make the necessary changes in myutils.py (line 14), predict.py (line 202 and 203), train.py (line 82 and 83), my_get_activations.py (line 37,65,66,101,102,103,144,145,146,184,185,227,228,229,245,246,280,281,338,363,364,365,440,446), bleu.py (line 55 and 56), rougemetric.py (line 110 and 111), astpathmaker.py (line 20)
+
 ### Step 2: Train a Model
 
 ```console
@@ -40,18 +42,18 @@ you@server:~/dev/attn-to-fc$ time python3 train.py --model-type=ast-attendgru-fc
 
 Model types are defined in model.py. 
 The attendgru and ast-attendgru model used was borrowed from the work of LeClair et al. We thank them for making their code open source and their repository accessible to everyone.<br />
-Alexander LeClair, Siyuan Jiang, and Collin McMillan. 2019. A neural model for generating natural language summaries of program subroutines. InProceedings of the 41st International Conference on Software Engineering. IEEE Press, 795–806.<br />
+Alexander LeClair, Siyuan Jiang, and Collin McMillan. 2019. A neural model for generating natural language summaries of program subroutines. In Proceedings of the 41st International Conference on Software Engineering. IEEE Press, 795–806.<br />
 https://arxiv.org/abs/1902.01954
 
 Their github repository link:
 https://github.com/mcmillco/funcom
 
 The graph2seq model was our faithful reimplementation of Xu et. al. <br />
-Kun Xu, Lingfei Wu, Zhiguo Wang, Yansong Feng, Michael Witbrock, and Vadim Sheinin. 2018.  Graph2seq: Graph to sequence learning with attention-based neural networks. Conference on Empirical Methods in Natural Language Processing(2018).<br />
+Kun Xu, Lingfei Wu, Zhiguo Wang, Yansong Feng, Michael Witbrock, and Vadim Sheinin. 2018.  Graph2seq: Graph to sequence learning with attention-based neural networks. Conference on Empirical Methods in Natural Language Processing (2018).<br />
 https://arxiv.org/abs/1804.00823
 
 The code2seq model was our faithful reimplementation of Alon et al.<br />
-Uri Alon, Shaked Brody, Omer Levy, and Eran Yahav. 2019. code2seq: Generating sequences from structured representations of code. International Conference on Learning Representations(2019).<br />
+Uri Alon, Shaked Brody, Omer Levy, and Eran Yahav. 2019. Code2seq: Generating sequences from structured representations of code. International Conference on Learning Representations (2019).<br />
 https://arxiv.org/abs/1808.01400
 
 For all these models, we added file context information to implement our own custom models. These models can be found in models/attendgru_fc.py, models/atfilecont.py, models/graph2seq_fc.py and models/code2seq_fc.py
