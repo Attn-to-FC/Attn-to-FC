@@ -68,17 +68,22 @@ class AstAttentiongruFCModel:
 
         tcontext = dot([tattn, tencout], axes=[2, 1])
 
+        # Adding file context information to ast-attendgru model
+        # shared embedding between tdats and sdats
         semb = TimeDistributed(tdel)
         sde = semb(sdat_input)
         
+        # sdats encoder
         senc = TimeDistributed(CuDNNGRU(int(self.recdims)))
         senc = senc(sde)
 
+        # attention to sdats
         sattn = dot([decout, senc], axes=[2, 2])
         sattn = Activation('softmax')(sattn)
 
         scontext = dot([sattn, senc], axes=[2, 1])
 
+        # context vector has teh result of attention to sdats along with ast, tdats and decoder output vectors
         context = concatenate([scontext, tcontext, acontext, decout])
 
         out = TimeDistributed(Dense(self.tdddims, activation="relu"))(context)

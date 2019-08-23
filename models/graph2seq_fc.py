@@ -52,12 +52,9 @@ class Graph2SeqFCModel:
         tdel = Embedding(output_dim=self.embdims, input_dim=self.tdatvocabsize, mask_zero=False)
         tde = tdel(tdat_input)
         
+        # Adding file context information to the graph2seq model
         # note on embedding spaces below
         # in this model, the embedding is shared between tdats, sdats, and ast nodes
-        # OurModel8 model is identical to this model, but separates the embedding space for ast nodes
-        # the results were that OurModel8 performed much worse than OurModel7 and took far longer to train
-        
-        #se = Embedding(output_dim=self.smldims, input_dim=self.smlvocabsize, mask_zero=False)(smlnode_input)
         se = tdel(smlnode_input)
 
         tenc = CuDNNGRU(self.recdims, return_state=True, return_sequences=True)

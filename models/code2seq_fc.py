@@ -44,6 +44,7 @@ class Code2SeqFCModel:
     def create_model(self):
         
         tdat_input = Input(shape=(self.tdatlen,))
+        # creating an sdats input
         sdat_input = Input(shape=(self.sdatlen, self.config['stdatlen']))
         astp_input = Input(shape=(self.config['maxpaths'], self.config['pathlen']))
         com_input = Input(shape=(self.comlen,))
@@ -63,17 +64,22 @@ class Code2SeqFCModel:
 
         tcontext = dot([tattn, tencout], axes=[2, 1])
 
+        # Adding file context information to code2seq model
+        # using tdats embedding space for sdats as well
         semb = TimeDistributed(tdel)
         sde = semb(sdat_input)
         
+        # sdats encoder
         senc = TimeDistributed(CuDNNGRU(int(self.recdims)))
         senc = senc(sde)
 
+        # sdats attention
         sattn = dot([decout, senc], axes=[2, 2])
         sattn = Activation('softmax')(sattn)
 
         scontext = dot([sattn, senc], axes=[2, 1])
 
+        # using tdats embedding space for sdats as well 
         aemb = TimeDistributed(tdel)
         ade = aemb(astp_input)
         

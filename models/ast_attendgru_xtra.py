@@ -6,6 +6,10 @@ import keras
 import keras.utils
 import tensorflow as tf
 
+# Much thanks to LeClair et al. for providing the open source implementation of their model.
+# https://arxiv.org/abs/1902.01954
+# https://github.com/mcmillco/funcom
+
 class AstAttentionGRUModel:
     def __init__(self, config):
         

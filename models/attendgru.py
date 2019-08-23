@@ -6,11 +6,9 @@ import keras.utils
 import tensorflow as tf
 from keras import metrics
 
-# This is a generic attentional seq2seq model.
-
-# I write this guide with much thanks to:
-# https://wanasit.github.io/attention-based-sequence-to-sequence-in-keras.html
-# https://arxiv.org/abs/1508.04025
+# Much thanks to LeClair et al. for providing the open source implementation of their model.
+# https://arxiv.org/abs/1902.01954
+# https://github.com/mcmillco/funcom
 
 def top2(y1, y2):
     return metrics.top_k_categorical_accuracy(y1, y2, k=2)
