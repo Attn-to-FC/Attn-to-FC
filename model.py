@@ -18,28 +18,28 @@ def create_model(modeltype, config):
     mdl = None
 
     if modeltype == 'attendgru':
-    	# base attention GRU model based on Nematus architecture
+    	# base attention GRU model based on LeCLair et al.
         mdl = AttentionGRUModel(config)
     elif modeltype == 'ast-attendgru':
-    	# attention GRU model with added AST information from srcml. 
+    	# attention GRU model with added AST information based on LeClair et al. 
         mdl = xtra(config)
     elif modeltype == 'attendgru-fc':
-        # sandbox model to try things
+        # our attention GRU model with added file context
         mdl = attendgrufc(config)
     elif modeltype == 'graph2seq':
-        # sandbox model to try things
+        # our implementation of base graph2seq model based on Xu et al.
         mdl = Graph2SeqModel(config)
     elif modeltype == 'graph2seq-fc':
-        # sandbox model to try things
+        # our graph2seq model with added file context information
         mdl = graph2seqfc(config)
     elif modeltype == 'ast-attendgru-fc':
-        # sandbox model to try things
+        # our attention GRU model with both AST and file context information added
         mdl = xtrafc(config)
     elif modeltype == 'code2seq-fc':
-        # sandbox model to try things
+        # our code2seq model with custom file context information added
         mdl = code2seqfc(config)
     elif modeltype == 'code2seq':
-        # sandbox model to try things
+        # our implementation of base code2seq model based on Alon et al.
         mdl = Code2SeqModel(config)
     else:
         print("{} is not a valid model type".format(modeltype))
