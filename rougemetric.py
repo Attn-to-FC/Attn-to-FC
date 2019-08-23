@@ -2,7 +2,6 @@ import sys
 import pickle
 import argparse
 import re
-import MySQLdb
 import rouge
 
 from nltk.translate.bleu_score import corpus_bleu, sentence_bleu
@@ -148,9 +147,6 @@ if __name__ == '__main__':
         preds[fid] = ' '.join(pred)
     predicts.close()
     drop()
-
-    #db = MySQLdb.connect(host='localhost', user='ports_20k', passwd='s3m3rU', db='sourcerer')
-    #cur = db.cursor()
     re_0001_ = re.compile(r'([^a-zA-Z0-9 ])|([a-z0-9_][A-Z])')
 
     refs = list()
@@ -166,33 +162,12 @@ if __name__ == '__main__':
         if len(com) < 1:
             continue
 
-        #q = 'select name from functionalunits where id='+str(fid)
-        #cur.execute(q)
-        #for tname in cur.fetchall():
-        #    fname = re_0001_.sub(re_0002, str(tname))
-        #    fname = fname.lower()
-        #    fname = fname.rstrip()
-        #    fname = fname.lstrip()
-
-        #print(fname, com)
-
-        #c = 0
-        #for word in fname.split(' '):
-        #    if word in com:
-        #        c += 1
-        #print(fname, com, c, len(fname.split(' ')))
-        #if (c / len(fname.split(' '))) >= 0.5:
-        #    continue
-
         try:
             newpreds.append(preds[fid])
         except Exception as ex:
-            #newpreds.append([])
             continue
         
         refs.append(com)
 
     print('final status')
     print_scores(get_rouge_score(newpreds, refs, False))
-    #print(rouge_so_far(evaluator, refs, newpreds))
-
