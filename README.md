@@ -87,7 +87,7 @@ The 10 digit integer at the end of the file is the epoch time at which training 
 
 Here are the list of models and their corresponding trained model filenames that were used to obtain the bleu scores as listed in table 1 of the paper:</br>
 | model name | model path |
-| ---------- | ---------- |
+| :--------: | :--------: |
 | attendgru | /nfs/projects/attn-to-fc/data/outdir/models/attendgru_E04_1565797619.h5 |
 
 ```console
