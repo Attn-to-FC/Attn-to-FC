@@ -85,10 +85,21 @@ The 10 digit integer at the end of the file is the epoch time at which training 
 /nfs/projects/attn-to-fc/data/outdir/models/ast-attendgru-fc_E07_1565109688.h5  
 /nfs/projects/attn-to-fc/data/outdir/models/ast-attendgru-fc_E08_1565109688.h5 
 
-Here are the list of models and their corresponding trained model filenames that were used to obtain the bleu scores as listed in table 1 of the paper:</br>
-| model name | model path |
-| :--------: | :--------: |
-| attendgru | /nfs/projects/attn-to-fc/data/outdir/models/attendgru_E04_1565797619.h5 |
+
+Here are the list of models and their corresponding trained model filenames that were used to obtain the bleu scores as listed in table 1 of the paper:
+
+| Model Name      | Model Path |
+| ----------- | ----------- |
+| attendgru      | /nfs/projects/attn-to-fc/data/outdir/models/attendgru_E04_1565797619.h5       |
+| ast-attendgru   | /nfs/projects/attn-to-fc/data/outdir/models/ast-attendgru_E04_1554133793.h5        |
+| graph2seq      | /nfs/projects/attn-to-fc/data/outdir/models/graph2seq_E04_1554124260.h5 |
+| code2seq      | /nfs/projects/attn-to-fc/data/outdir/models/code2seq_E04_1565726816.h5       |
+| attendgru+FC   | /nfs/projects/attn-to-fc/data/outdir/models/attendgru-fc_E05_1564348142.h5        |
+| astattendgru+FC      | /nfs/projects/attn-to-fc/data/outdir/models/ast-attendgru-fc_E07_1565109688.h5 |
+| graph2seq+FC      | /nfs/projects/attn-to-fc/data/outdir/models/graph2seq-fc_E04_1563279697.h5       |
+| code2seq+FC   | /nfs/projects/attn-to-fc/data/outdir/models/code2seq-fc_E04_1565726584.h5        |
+| ast-attendgru-ablation      | /nfs/projects/attn-to-fc/data/outdir/models/ast-attendgru_E08_1566229103.h5       |
+| ast-attendgru+FC-ablation   | /nfs/projects/attn-to-fc/data/outdir/models/ast-attendgru-fc_E06_1566229294.h5        |
 
 ```console
 you@server:~/dev/attn-to-fc$ time python3 train.py --model-type=ast-attendgru-fc --gpu=0 --help
