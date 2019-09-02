@@ -26,13 +26,27 @@ We use the dataset of 2.1m Java methods and method comments, already cleaned and
 Extract the dataset to a directory (/nfs/projects/ is the assumed default) so that you have a directory structure:  
 /nfs/projects/attn-to-fc/data/standard/dataset.pkl.
 
-To be consistent with defaults, create the following directories:  
+The data for the code2seq and graph2seq models are organized in a different pickle file and can be obtained from the following link </br>
+https://attntofcicse2020.s3.us-east-2.amazonaws.com/data.zip
+
+Extract the dataset in the /nfs/projects/attn-to-fc/data directory.
+Notice that this directory also contains an outdir child directory. 
+This directory contains the model files, configuration files and prediction outputs of the models listed in table 1 of the paper.
+
+Therefore, the default directory structure should be: </br>
+```/nfs/projects/attn-to-fc/data/standard``` which contains the dataset obtained from LeClair et al. </br>
+```/nfs/projects/attn-to-fc/data/graphast_data``` which contains the dataset compatible for code2seq and graph2seq </br>
+```/nfs/projects/attn-to-fc/data/outdir``` which contains the model files, configuration files, prediction files and have the following structure:</br>
+```
 /nfs/projects/attn-to-fc/data/outdir/models/  
 /nfs/projects/attn-to-fc/data/outdir/histories/  
 /nfs/projects/attn-to-fc/data/outdir/predictions/  
 /nfs/projects/attn-to-fc/data/outdir/viz/
+```
 
 If you choose to have a different directory structure, please make the necessary changes in myutils.py (line 14), predict.py (line 202 and 203), train.py (line 82 and 83), my_get_activations.py (line 37,65,66,101,102,103,144,145,146,184,185,227,228,229,245,246,280,281,338,363,364,365,440,446), bleu.py (line 55 and 56), rougemetric.py (line 110 and 111), astpathmaker.py (line 20)
+
+
 
 ### Step 2: Train a Model
 
