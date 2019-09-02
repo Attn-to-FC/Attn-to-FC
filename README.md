@@ -44,7 +44,7 @@ Therefore, the default directory structure should be: </br>
 /nfs/projects/attn-to-fc/data/outdir/viz/
 ```
 
-If you choose to have a different directory structure, please make the necessary changes in myutils.py (line 14), predict.py (line 202 and 203), train.py (line 82 and 83), my_get_activations.py (line 37,65,66,101,102,103,144,145,146,184,185,227,228,229,245,246,280,281,338,363,364,365,440,446), bleu.py (line 55 and 56), rougemetric.py (line 110 and 111), astpathmaker.py (line 20)
+If you choose to have a different directory structure, please make the necessary changes in myutils.py (line 14), predict.py (line 202 and 203), train.py (line 82 and 83), my_get_activations.py (line 37, 65, 66, 101, 102, 103, 144, 145, 146, 184, 185, 227, 228, 229, 245, 246, 280, 281, 338, 363, 364, 365, 440, 446), bleu.py (line 55 and 56), rougemetric.py (line 110 and 111), astpathmaker.py (line 20)
 
 
 
