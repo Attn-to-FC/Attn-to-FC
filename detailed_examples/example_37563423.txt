@@ -1,0 +1,6 @@
+Ref comment: "returns the height of the font described by the receiver"
+Ast-attendgru pred: "returns the height of the window"
+Attn-to-fc pred: "returns the height of the font"
+
+The file context attn lights up in function 1 which is the only function with the word font in it.
+This correctly allows the model to predict the word 'font' instead of the vague/incorrect prediction word 'window' by the astattendgru model.
