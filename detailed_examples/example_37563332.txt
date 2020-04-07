@@ -1,0 +1,9 @@
+Ref comment: "adds the given rectangle to the collection of polygons"
+Astattendgru pred: "adds the given x y to the collection of values"
+Attn-to-fc pred: "adds the given rectangle to the collection of polygons"
+
+The name of the funciton is 'add' with the parameters (int x, int y, int width, int height) (function 5 in the file).
+However, there is another add function with parameters (Rectangle rect) (This function is function 4 in the file).
+The heatmap at stopword 4 (just before predicting rectangle for attn-to-fc model and x for astattendgru model) shows that for the file context attention, the map lights up at function 4, with the word rectangle.
+If we look at the tdats attention, both attn-to-fc and astattendgru looks at words 4-11 (The 4 parameters and their types).
+But only attn-to-fc is able to combine the information obtained from the 4 parameters and the other function (function 4 with the word rectangle) to correctly predict the output word 'rectangle.'
