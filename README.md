@@ -1,6 +1,9 @@
 # Attn-to-FC
 
-This repository contains the code for Attn-to-FC.
+This repository contains the public release code for Attn-to-FC, a tool for source code summarization using file context information.
+
+### Publication related to this work:
+Haque, S., LeClair, A., Wu, L., McMillan, C., "Improved Automatic Summarization of Subroutines via Attention to File Context", in Proc. of the 17th International Conference on Mining Software Repositories (MSR ’20), October 5–6, 2020, Seoul, Republic of Korea. 
 
 ### Example Output
 Example output from the ast-attendgru-fc model compared to ast-attendgru model and reference summaries written by humans:
