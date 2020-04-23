@@ -157,5 +157,5 @@ you@server:~/dev/attn-to-fc$ time python3 rougemetric.py /nfs/projects/attn-to-f
 This will output a rouge score for the prediction file.
 
 ### Author information
-To learn more about the first author, visit https://sakibhaque.github.io/
+To learn more about the author, visit https://sakibhaque.github.io/
 If you have any questions or concerns, please do not hesitate to reach out the authors via the following email: shaque@nd.edu
