@@ -158,4 +158,4 @@ This will output a rouge score for the prediction file.
 
 ### Author information
 To learn more about the author, visit https://sakibhaque.github.io/
-If you have any questions or concerns, please do not hesitate to reach out the authors via the following email: shaque@nd.edu
+If you have any questions or concerns, please do not hesitate to reach out the authors via the following email: attn2fc.msr2020@gmail.com, shaque@nd.edu
