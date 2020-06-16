@@ -1,6 +1,9 @@
 # Attn-to-FC
 
-This repository contains the code for Attn-to-FC.
+This repository contains the public release code for Attn-to-FC, a tool for source code summarization using file context information.
+
+### Publication related to this work:
+Haque, S., LeClair, A., Wu, L., McMillan, C., "Improved Automatic Summarization of Subroutines via Attention to File Context", in Proc. of the 17th International Conference on Mining Software Repositories (MSR ’20), October 5–6, 2020, Seoul, Republic of Korea. https://arxiv.org/abs/2004.04881
 
 ### Example Output
 Example output from the ast-attendgru-fc model compared to ast-attendgru model and reference summaries written by humans:
@@ -152,3 +155,7 @@ you@server:~/dev/attn-to-fc$ time python3 rougemetric.py /nfs/projects/attn-to-f
 ```
 
 This will output a rouge score for the prediction file.
+
+### Author information
+To learn more about the author, visit https://sakibhaque.github.io/
+If you have any questions or concerns, please do not hesitate to reach out the authors via the following email: attn2fc.msr2020@gmail.com, shaque@nd.edu

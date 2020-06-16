@@ -1,0 +1,11 @@
+Ref Comment: "disposes of the operating system resources associated with the clipboard"
+Astattendgru prediction: "disposes the dialog"
+Attn-to-fc prediction: "disposes of the operating system resources associated with the clipboard"
+
+Here's the tdats for this function: "public void dispose if is disposed return if display get thread thread current thread swing utilities is event dispatch thread dnd error swt error thread invalid access display null"
+The words system and clipboard were present in other functions in the file. 
+The word thread could possibly explain hoe the model predicted operating system, but not the whole thing correctly, including the part about clipboard without seeing it from the other functions.
+
+We look at the heatmap at stopword 4, which is right before the attn-to-fc model predicts 'operating' and stopword 10, which is right before the attn-to-fc model predicts 'clipboard.'
+At both instances, the file context attention looks most at function 7.
+Function 7 has both the words system and clipboard in it, which explains the heatmap.

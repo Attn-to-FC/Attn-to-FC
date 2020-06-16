@@ -1,0 +1,11 @@
+Ref comment: "returns the weight of the given edge"
+Ast-attendgru prediction: "returns the weight of the attribute"
+Attn-to-fc prediction: "returns the weight of the given edge"
+
+Let's look at the heatmaps at position 6, right before attn-to-fc predicts 'given' and ast-attendgru predicts 'attribute'.
+We can see the attention to methods 1,4,7,10 (10 is distinctly brighter than the others).
+And functions 1 and 4 have the word node in it, 7 have the word curr and the word ondexconcept (parameter type) while function 10 has the word graph in it.
+This makes the tdats attention for attn-to-fc focus more on word 5 and less on word 4 for tdats, but reversed for astattendgru 
+Word 4 is 'weight' while word 5 is 'ondexrelation' which also happens to be the type of the first parameter of the function.
+
+Combining all the information from the attention to other methods, tdats attention pays more attention to the parameter type, thus leading to the correct prediction 'given' and then 'edge' in the next word for attn-to-fc, but without this information astattendgru just focused on the word weight, thus resulting in the less helpful output word 'attribute.'

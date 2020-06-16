@@ -1,0 +1,13 @@
+Ref comment: "test of decode nmea method of class org"
+The ast-attendgru prediction: "test of decode <UNK>"
+Attn-to-fc prediction: `"test of decode nmea system method of class <UNK>`"
+
+The tdats of function 14624250 has the word nmea in it. 
+However if we look at the heatmap for the tdats activation of ast-attendgru at stopword 4 (right before it fails to predict the next word to be nmea) there are several bright spots on the map, thus preventing the model to definitively identify the word nmea.
+Therefore, the output is <UNK>.
+
+Now if we look at prediction stopword 4 for attn-to-fc, we see the heatmap for file context show brightest for method 1 and method 5.
+Method 1 in this file is the function for which we are trying to predict the comment and method 5 is another method in the file.
+Both these methods have the word nmea in it multiple times.
+Then if we look at the tdats attention heatmap, we see that heatmap at stopword 4 is the brightest at tdats position 4 and 9, both of which correspond to the word nmea in the tdats.
+It shows how the file context helped the tdats attention to hone in on the specific word in the tdats that the model should be looking at to predict the next word.
