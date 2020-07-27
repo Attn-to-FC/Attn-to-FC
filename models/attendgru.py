@@ -63,6 +63,7 @@ class AttentionGRUModel:
         out = Dense(self.comvocabsize, activation="softmax")(out)
         
         model = Model(inputs=[dat_input, com_input], outputs=out)
+        #keras.utils.plot_model(model, show_shapes=True)
 
         if self.config['multigpu']:
             model = keras.utils.multi_gpu_model(model, gpus=2)

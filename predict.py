@@ -208,6 +208,7 @@ if __name__ == '__main__':
     parser.add_argument('--zero-dats', dest='zerodats', type=str, default='no')
     parser.add_argument('--dtype', dest='dtype', type=str, default='float32')
     parser.add_argument('--tf-loglevel', dest='tf_loglevel', type=str, default='3')
+    parser.add_argument('--datfile', dest='datfile', type=str, default='dataset.pkl')
     parser.add_argument('--testval', dest='testval', type=str, default='test')
 
     args = parser.parse_args()
@@ -241,7 +242,7 @@ if __name__ == '__main__':
     drop()
 
     prep('loading sequences... ')
-    seqdata = pickle.load(open('%s/dataset.pkl' % (dataprep), 'rb'))
+    seqdata = pickle.load(open('%s/%s' % (dataprep, datfile), 'rb'))
     drop()
 
     print(zerodats)
