@@ -223,6 +223,7 @@ if __name__ == '__main__':
     modeltype = args.modeltype
     outfile = args.outfile
     zerodats = args.zerodats
+    datfile = args.datfile
     testval = args.testval
 
     if outfile is None:
