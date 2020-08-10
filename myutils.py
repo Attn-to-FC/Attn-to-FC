@@ -538,7 +538,7 @@ class batch_gen(keras.utils.Sequence):
             wcomseq = seqdata['c%s' % (tt)][fid]
             wsmlnodes = seqdata['s%s_nodes' % (tt)][fid]
             wsmledges = seqdata['s%s_edges' % (tt)][fid]
-            if (wsmledges.shape[0]):
+            if (wsmledges.shape[0] > 1000):
                 continue
 
             # crop/expand ast sequence
