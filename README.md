@@ -30,7 +30,8 @@ Extract the dataset to a directory (/nfs/projects/ is the assumed default) so th
 /nfs/projects/attn-to-fc/data/standard/dataset.pkl.
 
 The data for the code2seq and graph2seq models are organized in a different pickle file and can be obtained from the following link </br>
-https://attntofcicse2020.s3.us-east-2.amazonaws.com/data.zip
+<!--https://attntofcicse2020.s3.us-east-2.amazonaws.com/data.zip-->
+https://javagraphastdataset.s3.us-east-2.amazonaws.com/javagraphastdata.zip
 
 Extract the dataset in the /nfs/projects/attn-to-fc/data directory.
 Notice that this directory also contains an outdir child directory. 
