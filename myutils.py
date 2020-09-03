@@ -346,6 +346,7 @@ class batch_gen(keras.utils.Sequence):
         smlnodes = list()
         smledges = list()
         comouts = list()
+        badfids = list()
 
         fiddat = dict()
 
@@ -356,6 +357,7 @@ class batch_gen(keras.utils.Sequence):
             wsmlnodes = seqdata['s%s_nodes' % (tt)][fid]
             wsmledges = seqdata['s%s_edges' % (tt)][fid]
             if (wsmledges.shape[0] > 1000):
+                badfids.append(fid)
                 continue
 
             # crop/expand ast sequence
@@ -405,7 +407,9 @@ class batch_gen(keras.utils.Sequence):
         smledges = np.asarray(smledges)
         comseqs = np.asarray(comseqs)
         comouts = np.asarray(comouts)
-
+        
+        if tt == 'test':
+            return [fiddat, badfids]
         if not self.training:
             return fiddat
         else:
@@ -427,6 +431,7 @@ class batch_gen(keras.utils.Sequence):
         smlnodes = list()
         smledges = list()
         comouts = list()
+        badfids = list()
 
         fiddat = dict()
 
@@ -438,6 +443,7 @@ class batch_gen(keras.utils.Sequence):
             wsmlnodes = seqdata['s%s_nodes' % (tt)][fid]
             wsmledges = seqdata['s%s_edges' % (tt)][fid]
             if (wsmledges.shape[0] > 1000):
+                badfids.append(fid)
                 continue
 
             # crop/expand ast sequence
@@ -502,7 +508,9 @@ class batch_gen(keras.utils.Sequence):
         smledges = np.asarray(smledges)
         comseqs = np.asarray(comseqs)
         comouts = np.asarray(comouts)
-
+        
+        if tt == 'test':
+            return [fiddat, badfids]
         if not self.training:
             return fiddat
         else:
@@ -528,6 +536,7 @@ class batch_gen(keras.utils.Sequence):
         comseqs = list()
         smlpaths = list()
         comouts = list()
+        badfids = list()
 
         fiddat = dict()
 
@@ -539,6 +548,7 @@ class batch_gen(keras.utils.Sequence):
             wsmlnodes = seqdata['s%s_nodes' % (tt)][fid]
             wsmledges = seqdata['s%s_edges' % (tt)][fid]
             if (wsmledges.shape[0] > 1000):
+                badfids.append(fid)
                 continue
 
             # crop/expand ast sequence
@@ -629,6 +639,8 @@ class batch_gen(keras.utils.Sequence):
         comseqs = np.asarray(comseqs)
         comouts = np.asarray(comouts)
 
+        if tt == 'test':
+            return [fiddat, badfids]
         if not self.training:
             return fiddat
         else:
