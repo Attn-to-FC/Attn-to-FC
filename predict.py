@@ -30,8 +30,9 @@ import keras.backend as K
 from custom.graphlayers import OurCustomGraphLayer
 from keras_self_attention import SeqSelfAttention
 
-def gendescr_2inp(model, data, comstok, comlen, batchsize, config, strat='greedy'):
-    # right now, only greedy search is supported...
+def gendescr_2inp(model, data, comstok, comlen, batchsize, config, strat, bw):
+    if strat == 'beam':
+        return gendescr_2inp_beam(model, data, comstok, comlen, batchsize, config, bw)
     
     tdats, coms = list(zip(*data.values()))
     tdats = np.array(tdats)
@@ -48,8 +49,57 @@ def gendescr_2inp(model, data, comstok, comlen, batchsize, config, strat='greedy
 
     return final_data
 
-def gendescr_3inp(model, data, comstok, comlen, batchsize, config, strat='greedy'):
-    # right now, only greedy search is supported...
+def gendescr_2inp_beam(model, data, comstok, comlen, batchsize, config, w):
+    tdats, coms = list(zip(*data.values()))
+    tdats = np.array(tdats)
+    coms = np.array(coms)
+    bms = coms.shape[0]
+    beamcoms = np.tile(coms, [w, 1])
+    beamcoms = np.reshape(beamcoms, [w, bms, comlen])
+    beamprobs = np.zeros((w, bms))
+    psmat = np.zeros((bms, w*w, comlen))
+    prmat = np.zeros((bms, w*w))
+
+    results = model.predict([tdats, coms], batch_size=batchsize)
+    for c, s in enumerate(results):
+        for j in range(w):
+            ps = np.argmax(s)
+            pr = np.max(s)
+            pr = -np.log(pr)
+            s[ps] = 0
+            beamprobs[j][c] = pr
+            beamcoms[j][c][1] = ps
+
+    for i in range(2, comlen):
+        for j in range(w):
+            results = model.predict([tdats, beamcoms[j]], batch_size=batchsize)
+            for c, s in enumerate(results):
+                for k in range(w):
+                    ps = np.argmax(s)
+                    pr = np.max(s)
+                    pr = -np.log(pr)
+                    s[ps] = 0
+                    prmat[c][(j*w)+k] = beamprobs[j][c]+pr
+                    psmat[c][(j*w)+k] = beamcoms[j][c]
+                    psmat[c][(j*w)+k][i] = ps
+        for c,s in enumerate(prmat):
+            for j in range(w):
+                ps = np.argmin(s)
+                pr = np.min(s)
+                s[ps] = np.inf
+                beamprobs[j][c] = pr
+                beamcoms[j][c] = psmat[c][ps]
+    
+    coms = beamcoms[0]
+    final_data = {}
+    for fid, com in zip(data.keys(), coms):
+        final_data[fid] = seq2sent(com, comstok)
+
+    return final_data
+
+def gendescr_3inp(model, data, comstok, comlen, batchsize, config, strat, bw):
+    if strat == 'beam':
+        return gendescr_3inp_beam(model, data, comstok, comlen, batchsize, config, bw)
     
     tdats, coms, smls = list(zip(*data.values()))
     tdats = np.array(tdats)
@@ -67,16 +117,64 @@ def gendescr_3inp(model, data, comstok, comlen, batchsize, config, strat='greedy
 
     return final_data
 
-def gendescr_4inp(model, data, comstok, comlen, batchsize, config, strat='greedy'):
-    # right now, only greedy search is supported...
+def gendescr_3inp_beam(model, data, comstok, comlen, batchsize, config, w):
+    tdats, coms, smls = list(zip(*data.values()))
+    tdats = np.array(tdats)
+    coms = np.array(coms)
+    smls = np.array(smls)
+    bms = coms.shape[0]
+    beamcoms = np.tile(coms, [w, 1])
+    beamcoms = np.reshape(beamcoms, [w, bms, comlen])
+    beamprobs = np.zeros((w, bms))
+    psmat = np.zeros((bms, w*w, comlen))
+    prmat = np.zeros((bms, w*w))
+
+    results = model.predict([tdats, coms, smls], batch_size=batchsize)
+    for c, s in enumerate(results):
+        for j in range(w):
+            ps = np.argmax(s)
+            pr = np.max(s)
+            pr = -np.log(pr)
+            s[ps] = 0
+            beamprobs[j][c] = pr
+            beamcoms[j][c][1] = ps
+        
+    for i in range(2, comlen):
+        for j in range(w):
+            results = model.predict([tdats, beamcoms[j], smls], batch_size=batchsize)
+            for c, s in enumerate(results):
+                for k in range(w):
+                    ps = np.argmax(s)
+                    pr = np.max(s)
+                    pr = -np.log(pr)
+                    s[ps] = 0
+                    prmat[c][(j*w)+k] = beamprobs[j][c]+pr
+                    psmat[c][(j*w)+k] = beamcoms[j][c]
+                    psmat[c][(j*w)+k][i] = ps
+        for c,s in enumerate(prmat):
+            for j in range(w):
+                ps = np.argmin(s)
+                pr = np.min(s)
+                s[ps] = np.inf
+                beamprobs[j][c] = pr
+                beamcoms[j][c] = psmat[c][ps]
+
+    coms = beamcoms[0]
+    final_data = {}
+    for fid, com in zip(data.keys(), coms):
+        final_data[fid] = seq2sent(com, comstok)
+
+    return final_data
+
+def gendescr_4inp(model, data, comstok, comlen, batchsize, config, strat, bw):
+    if strat == 'beam':
+        return gendescr_4inp_beam(model, data, comstok, comlen, batchsize, config, bw)
 
     tdats, sdats, coms, smls = zip(*data.values())
     tdats = np.array(tdats)
     sdats = np.array(sdats)
     coms = np.array(coms)
     smls = np.array(smls)
-
-    #print(sdats)
 
     for i in range(1, comlen):
         results = model.predict([tdats, sdats, coms, smls], batch_size=batchsize)
@@ -89,8 +187,59 @@ def gendescr_4inp(model, data, comstok, comlen, batchsize, config, strat='greedy
 
     return final_data
 
-def gendescr_5inp(model, data, comstok, comlen, batchsize, config, strat='greedy'):
-    # right now, only greedy search is supported...
+def gendescr_4inp_beam(model, data, comstok, comlen, batchsize, config, w):
+    tdats, sdats, coms, smls = zip(*data.values())
+    tdats = np.array(tdats)
+    sdats = np.array(sdats)
+    coms = np.array(coms)
+    smls = np.array(smls)
+    bms = coms.shape[0]
+    beamcoms = np.tile(coms, [w, 1])
+    beamcoms = np.reshape(beamcoms, [w, bms, comlen])
+    beamprobs = np.zeros((w, bms))
+    psmat = np.zeros((bms, w*w, comlen))
+    prmat = np.zeros((bms, w*w))
+    
+    results = model.predict([tdats, sdats, coms, smls], batch_size=batchsize)
+    for c, s in enumerate(results):
+        for j in range(w):
+            ps = np.argmax(s)
+            pr = np.max(s)
+            pr = -np.log(pr)
+            s[ps] = 0
+            beamprobs[j][c] = pr
+            beamcoms[j][c][1] = ps
+    
+    for i in range(2, comlen):
+        for j in range(w):
+            results = model.predict([tdats, sdats, beamcoms[j], smls], batch_size=batchsize)
+            for c, s in enumerate(results):
+                for k in range(w):
+                    ps = np.argmax(s)
+                    pr = np.max(s)
+                    pr = -np.log(pr)
+                    s[ps] = 0
+                    prmat[c][(j*w)+k] = beamprobs[j][c]+pr
+                    psmat[c][(j*w)+k] = beamcoms[j][c]
+                    psmat[c][(j*w)+k][i] = ps
+        for c,s in enumerate(prmat):
+            for j in range(w):
+                ps = np.argmin(s)
+                pr = np.min(s)
+                s[ps] = np.inf
+                beamprobs[j][c] = pr
+                beamcoms[j][c] = psmat[c][ps]
+
+    coms = beamcoms[0]
+    final_data = {}
+    for fid, com in zip(data.keys(), coms):
+        final_data[fid] = seq2sent(com, comstok)
+
+    return final_data
+
+def gendescr_5inp(model, data, comstok, comlen, batchsize, config, strat, bw):
+    if strat == 'beam':
+        return gendescr_5inp_beam(model, data, comstok, comlen, batchsize, config, bw)
 
     tdats, sdats, coms, wsmlnodes, wsmledges = zip(*data.values())
     tdats = np.array(tdats)
@@ -98,8 +247,6 @@ def gendescr_5inp(model, data, comstok, comlen, batchsize, config, strat='greedy
     coms = np.array(coms)
     wsmlnodes = np.array(wsmlnodes)
     wsmledges = np.array(wsmledges)
-
-    #print(sdats)
 
     for i in range(1, comlen):
         results = model.predict([tdats, sdats, coms, wsmlnodes, wsmledges], batch_size=batchsize)
@@ -112,16 +259,66 @@ def gendescr_5inp(model, data, comstok, comlen, batchsize, config, strat='greedy
 
     return final_data
 
-def gendescr_graphast(model, data, comstok, comlen, batchsize, config, strat='greedy'):
-    # right now, only greedy search is supported...
+def gendescr_5inp_beam(model, data, comstok, comlen, batchsize, config, w):
+    tdats, sdats, coms, wsmlnodes, wsmledges = zip(*data.values())
+    tdats = np.array(tdats)
+    sdats = np.array(sdats)
+    coms = np.array(coms)
+    wsmlnodes = np.array(wsmlnodes)
+    wsmledges = np.array(wsmledges)
+    bms = coms.shape[0]
+    beamcoms = np.tile(coms, [w, 1])
+    beamcoms = np.reshape(beamcoms, [w, bms, comlen])
+    beamprobs = np.zeros((w, bms))
+    psmat = np.zeros((bms, w*w, comlen))
+    prmat = np.zeros((bms, w*w))
+
+    results = model.predict([tdats, sdats, coms, wsmlnodes, wsmledges], batch_size=batchsize)
+    for c, s in enumerate(results):
+        for j in range(w):
+            ps = np.argmax(s)
+            pr = np.max(s)
+            pr = -np.log(pr)
+            s[ps] = 0
+            beamprobs[j][c] = pr
+            beamcoms[j][c][1] = ps
+
+    for i in range(2, comlen):
+        for j in range(w):
+            results = model.predict([tdats, sdats, beamcoms[j], wsmlnodes, wsmledges], batch_size=batchsize)
+            for c, s in enumerate(results):
+                for k in range(w):
+                    ps = np.argmax(s)
+                    pr = np.max(s)
+                    pr = -np.log(pr)
+                    s[ps] = 0
+                    prmat[c][(j*w)+k] = beamprobs[j][c]+pr
+                    psmat[c][(j*w)+k] = beamcoms[j][c]
+                    psmat[c][(j*w)+k][i] = ps
+        for c,s in enumerate(prmat):
+            for j in range(w):
+                ps = np.argmin(s)
+                pr = np.min(s)
+                s[ps] = np.inf
+                beamprobs[j][c] = pr
+                beamcoms[j][c] = psmat[c][ps]
+
+    coms = beamcoms[0]
+    final_data = {}
+    for fid, com in zip(data.keys(), coms):
+        final_data[fid] = seq2sent(com, comstok)
+
+    return final_data
+
+def gendescr_graphast(model, data, comstok, comlen, batchsize, config, strat, bw):
+    if strat == 'beam':
+        return gendescr_graphast_beam(model, data, comstok, comlen, batchsize, config, bw)
 
     tdats, coms, wsmlnodes, wsmledges = zip(*data.values())
     tdats = np.array(tdats)
     coms = np.array(coms)
     wsmlnodes = np.array(wsmlnodes)
     wsmledges = np.array(wsmledges)
-
-    #print(sdats)
 
     for i in range(1, comlen):
         results = model.predict([tdats, coms, wsmlnodes, wsmledges], batch_size=batchsize)
@@ -134,16 +331,65 @@ def gendescr_graphast(model, data, comstok, comlen, batchsize, config, strat='gr
 
     return final_data
 
-def gendescr_pathast(model, data, comstok, comlen, batchsize, config, strat='greedy'):
-    # right now, only greedy search is supported...
+def gendescr_graphast_beam(model, data, comstok, comlen, batchsize, config, w):
+    tdats, coms, wsmlnodes, wsmledges = zip(*data.values())
+    tdats = np.array(tdats)
+    coms = np.array(coms)
+    wsmlnodes = np.array(wsmlnodes)
+    wsmledges = np.array(wsmledges)
+    bms = coms.shape[0]
+    beamcoms = np.tile(coms, [w, 1])
+    beamcoms = np.reshape(beamcoms, [w, bms, comlen])
+    beamprobs = np.zeros((w, bms))
+    psmat = np.zeros((bms, w*w, comlen))
+    prmat = np.zeros((bms, w*w))
+
+    results = model.predict([tdats, coms, wsmlnodes, wsmledges], batch_size=batchsize)
+    for c, s in enumerate(results):
+        for j in range(w):
+            ps = np.argmax(s)
+            pr = np.max(s)
+            pr = -np.log(pr)
+            s[ps] = 0
+            beamprobs[j][c] = pr
+            beamcoms[j][c][1] = ps
+
+    for i in range(2, comlen):
+        for j in range(w):
+            results = model.predict([tdats, beamcoms[j], wsmlnodes, wsmledges], batch_size=batchsize)
+            for c, s in enumerate(results):
+                for k in range(w):
+                    ps = np.argmax(s)
+                    pr = np.max(s)
+                    pr = -np.log(pr)
+                    s[ps] = 0
+                    prmat[c][(j*w)+k] = beamprobs[j][c]+pr
+                    psmat[c][(j*w)+k] = beamcoms[j][c]
+                    psmat[c][(j*w)+k][i] = ps
+        for c,s in enumerate(prmat):
+            for j in range(w):
+                ps = np.argmin(s)
+                pr = np.min(s)
+                s[ps] = np.inf
+                beamprobs[j][c] = pr
+                beamcoms[j][c] = psmat[c][ps]
+
+    coms = beamcoms[0]
+    final_data = {}
+    for fid, com in zip(data.keys(), coms):
+        final_data[fid] = seq2sent(com, comstok)
+
+    return final_data
+
+def gendescr_pathast(model, data, comstok, comlen, batchsize, config, strat, bw):
+    if strat == 'beam':
+        return gendescr_pathast_beam(model, data, comstok, comlen, batchsize, config, bw)
 
     tdats, sdats, coms, wsmlpaths = zip(*data.values())
     tdats = np.array(tdats)
     coms = np.array(coms)
     sdats = np.array(sdats)
     wsmlpaths = np.array(wsmlpaths)
-
-    #print(sdats)
 
     for i in range(1, comlen):
         if(config['use_sdats']):
@@ -159,21 +405,125 @@ def gendescr_pathast(model, data, comstok, comlen, batchsize, config, strat='gre
 
     return final_data
 
-def gendescr_threed(model, data, comstok, comlen, batchsize, config, strat='greedy'):
-    # right now, only greedy search is supported...
+def gendescr_pathast_beam(model, data, comstok, comlen, batchsize, config, w):
+    tdats, sdats, coms, wsmlpaths = zip(*data.values())
+    tdats = np.array(tdats)
+    coms = np.array(coms)
+    sdats = np.array(sdats)
+    wsmlpaths = np.array(wsmlpaths)
+    bms = coms.shape[0]
+    beamcoms = np.tile(coms, [w, 1])
+    beamcoms = np.reshape(beamcoms, [w, bms, comlen])
+    beamprobs = np.zeros((w, bms))
+    psmat = np.zeros((bms, w*w, comlen))
+    prmat = np.zeros((bms, w*w))
+
+    if(config['use_sdats']):
+        results = model.predict([tdats, sdats, coms, wsmlpaths], batch_size=batchsize)
+    else:
+        results = model.predict([tdats, coms, wsmlpaths], batch_size=batchsize)
+    for c, s in enumerate(results):
+        for j in range(w):
+            ps = np.argmax(s)
+            pr = np.max(s)
+            pr = -np.log(pr)
+            s[ps] = 0
+            beamprobs[j][c] = pr
+            beamcoms[j][c][1] = ps
+    
+    for i in range(2, comlen):
+        for j in range(w):
+            if(config['use_sdats']):
+                results = model.predict([tdats, sdats, beamcoms[j], wsmlpaths], batch_size=batchsize)
+            else:
+                results = model.predict([tdats, beamcoms[j], wsmlpaths], batch_size=batchsize)
+            for c, s in enumerate(results):
+                for k in range(w):
+                    ps = np.argmax(s)
+                    pr = np.max(s)
+                    pr = -np.log(pr)
+                    s[ps] = 0
+                    prmat[c][(j*w)+k] = beamprobs[j][c]+pr
+                    psmat[c][(j*w)+k] = beamcoms[j][c]
+                    psmat[c][(j*w)+k][i] = ps
+            for c,s in enumerate(prmat):
+                for j in range(w):
+                    ps = np.argmin(s)
+                    pr = np.min(s)
+                    s[ps] = np.inf
+                    beamprobs[j][c] = pr
+                    beamcoms[j][c] = psmat[c][ps]
+
+    coms = beamcoms[0]
+    final_data = {}
+    for fid, com in zip(data.keys(), coms):
+        final_data[fid] = seq2sent(com, comstok)
+
+    return final_data
+
+def gendescr_threed(model, data, comstok, comlen, batchsize, config, strat, bw):
+    if strat == 'beam':
+        return gendescr_threed_beam(model, data, comstok, comlen, batchsize, config, bw)
 
     tdats, sdats, coms = zip(*data.values())
     tdats = np.array(tdats)
     sdats = np.array(sdats)
     coms = np.array(coms)
 
-    #print(sdats)
-
     for i in range(1, comlen):
         results = model.predict([tdats, sdats, coms], batch_size=batchsize)
         for c, s in enumerate(results):
             coms[c][i] = np.argmax(s)
 
+    final_data = {}
+    for fid, com in zip(data.keys(), coms):
+        final_data[fid] = seq2sent(com, comstok)
+
+    return final_data
+
+def gendescr_threed_beam(model, data, comstok, comlen, batchsize, config, w):
+    tdats, sdats, coms = zip(*data.values())
+    tdats = np.array(tdats)
+    sdats = np.array(sdats)
+    coms = np.array(coms)
+    bms = coms.shape[0]
+    beamcoms = np.tile(coms, [w, 1])
+    beamcoms = np.reshape(beamcoms, [w, bms, comlen])
+    beamprobs = np.zeros((w, bms))
+    psmat = np.zeros((bms, w*w, comlen))
+    prmat = np.zeros((bms, w*w))
+
+    results = model.predict([tdats, sdats, coms], batch_size=batchsize)
+    for c, s in enumerate(results):
+        for j in range(w):
+            ps = np.argmax(s)
+            pr = np.max(s)
+            pr = -np.log(pr)
+            s[ps] = 0
+            beamprobs[j][c] = pr
+            beamcoms[j][c][1] = ps
+
+    for i in range(2, comlen):
+        for j in range(w):
+            results = model.predict([tdats, sdats, beamcoms[j]], batch_size=batchsize)
+            for c, s in enumerate(results):
+                for k in range(w):
+                    ps = np.argmax(s)
+                    pr = np.max(s)
+                    pr = -np.log(pr)
+                    s[ps] = 0
+                    prmat[c][(j*w)+k] = beamprobs[j][c]+pr
+                    psmat[c][(j*w)+k] = beamcoms[j][c]
+                    psmat[c][(j*w)+k][i] = ps
+        for c,s in enumerate(prmat):
+            for j in range(w):
+                ps = np.argmin(s)
+                pr = np.min(s)
+                s[ps] = np.inf
+                beamprobs[j][c] = pr
+                beamcoms[j][c] = psmat[c][ps]
+
+    coms = beamcoms[0]
     final_data = {}
     for fid, com in zip(data.keys(), coms):
         final_data[fid] = seq2sent(com, comstok)
@@ -202,6 +552,8 @@ if __name__ == '__main__':
     parser.add_argument('--data', dest='dataprep', type=str, default='/nfs/projects/attn-to-fc/data/standard')
     parser.add_argument('--outdir', dest='outdir', type=str, default='/nfs/projects/attn-to-fc/data/outdir')
     parser.add_argument('--batch-size', dest='batchsize', type=int, default=200)
+    parser.add_argument('--strat', dest='strat', type=str, default='greedy')
+    parser.add_argument('--beam-width', dest='beamwidth', type=int, default=1)
     parser.add_argument('--num-inputs', dest='numinputs', type=int, default=3)
     parser.add_argument('--model-type', dest='modeltype', type=str, default=None)
     parser.add_argument('--outfile', dest='outfile', type=str, default=None)
@@ -225,6 +577,25 @@ if __name__ == '__main__':
     zerodats = args.zerodats
     datfile = args.datfile
     testval = args.testval
+    strat = args.strat
+    beamwidth = args.beamwidth
+
+    if strat != 'beam' and strat != 'greedy':
+        try:
+            raise Exception(strat)
+        except Exception as inst:
+            t = inst.args[0]
+            print('{} predict strategy is not supported yet. Only greedy and beam predict strategy supported.'.format(t))
+            raise
+
+    if beamwidth < 1:
+        try:
+            raise Exception(beamwidth)
+        except Exception as inst:
+            w = inst.args[0]
+            print('beam width cannot be less than 1')
+            raise
+        
 
     if outfile is None:
         outfile = modelfile.split('/')[-1]
@@ -289,7 +660,10 @@ if __name__ == '__main__':
     comstart = np.zeros(comlen)
     stk = comstok.w2i['<s>']
     comstart[0] = stk
-    outfn = outdir+"/predictions/predict-{}.txt".format(outfile.split('.')[0])
+    if strat == 'greedy':
+        outfn = outdir+"/predictions/predict-{}.txt".format(outfile.split('.')[0])
+    else:
+        outfn = outdir+"/predictions/predict-{}-beam-{}.txt".format(outfile.split('.')[0], beamwidth)
     outf = open(outfn, 'w')
     print("writing to file: " + outfn)
     batch_sets = [allfids[i:i+batchsize] for i in range(0, len(allfids), batchsize)]
@@ -305,19 +679,25 @@ if __name__ == '__main__':
         batch = bg.make_batch(fid_set)
 
         if config['batch_maker'] == 'datsonly':
-            batch_results = gendescr_2inp(model, batch, comstok, comlen, batchsize, config, strat='greedy')
+            batch_results = gendescr_2inp(model, batch, comstok, comlen, batchsize, config, strat, beamwidth)
         elif config['batch_maker'] == 'ast':
-            batch_results = gendescr_3inp(model, batch, comstok, comlen, batchsize, config, strat='greedy')
+            batch_results = gendescr_3inp(model, batch, comstok, comlen, batchsize, config, strat, beamwidth)
         elif config['batch_maker'] == 'ast_threed':
-            batch_results = gendescr_4inp(model, batch, comstok, comlen, batchsize, config, strat='greedy')
+            batch_results = gendescr_4inp(model, batch, comstok, comlen, batchsize, config, strat, beamwidth)
         elif config['batch_maker'] == 'threed':
-            batch_results = gendescr_threed(model, batch, comstok, comlen, batchsize, config, strat='greedy')
+            batch_results = gendescr_threed(model, batch, comstok, comlen, batchsize, config, strat, beamwidth)
         elif config['batch_maker'] == 'graphast':
-            batch_results = gendescr_graphast(model, batch, comstok, comlen, batchsize, config, strat='greedy')
+            if testval == 'test':
+                batch = batch[0]
+            batch_results = gendescr_graphast(model, batch, comstok, comlen, batchsize, config, strat, beamwidth)
         elif config['batch_maker'] == 'graphast_threed':
-            batch_results = gendescr_5inp(model, batch, comstok, comlen, batchsize, config, strat='greedy')
+            if testval == 'test':
+                batch = batch[0]
+            batch_results = gendescr_5inp(model, batch, comstok, comlen, batchsize, config, strat, beamwidth)
         elif config['batch_maker'] == 'pathast_threed':
-            batch_results = gendescr_pathast(model, batch, comstok, comlen, batchsize, config, strat='greedy')
+            if testval == 'test':
+                batch = batch[0]
+            batch_results = gendescr_pathast(model, batch, comstok, comlen, batchsize, config, strat, beamwidth)
         else:
             print('error: invalid batch maker')
             sys.exit()
