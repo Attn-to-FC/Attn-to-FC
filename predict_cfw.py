@@ -37,7 +37,8 @@ def gendescr_2inp(model, data, comstok, comlen, batchsize, config, refcoms, coun
     tdats = np.array(tdats)
     coms = np.array(coms)
     
-    coms[:,1] = np.array(list(refcoms.values())[count*batchsize:((count+1)*batchsize)])[:,1]
+    #coms[:,1] = np.array(list(refcoms.values())[count*batchsize:((count+1)*batchsize)])[:,1]
+    coms[:,1] = np.array(list(refcoms.values()))[:,1]
     for i in range(2, comlen):
         results = model.predict([tdats, coms], batch_size=batchsize)
         for c, s in enumerate(results):
@@ -57,7 +58,8 @@ def gendescr_3inp(model, data, comstok, comlen, batchsize, config, refcoms, coun
     coms = np.array(coms)
     smls = np.array(smls)
 
-    coms[:,1] = np.array(list(refcoms.values())[count*batchsize:((count+1)*batchsize)])[:,1]
+    #coms[:,1] = np.array(list(refcoms.values())[count*batchsize:((count+1)*batchsize)])[:,1]
+    coms[:,1] = np.array(list(refcoms.values()))[:,1]
     for i in range(2, comlen):
         results = model.predict([tdats, coms, smls], batch_size=batchsize)
         for c, s in enumerate(results):
@@ -78,7 +80,8 @@ def gendescr_4inp(model, data, comstok, comlen, batchsize, config, refcoms, coun
     coms = np.array(coms)
     smls = np.array(smls)
 
-    coms[:,1] = np.array(list(refcoms.values())[count*batchsize:((count+1)*batchsize)])[:,1]
+    #coms[:,1] = np.array(list(refcoms.values())[count*batchsize:((count+1)*batchsize)])[:,1]
+    coms[:,1] = np.array(list(refcoms.values()))[:,1]
     for i in range(2, comlen):
         results = model.predict([tdats, sdats, coms, smls], batch_size=batchsize)
         for c, s in enumerate(results):
@@ -100,7 +103,8 @@ def gendescr_5inp(model, data, comstok, comlen, batchsize, config, refcoms, coun
     wsmlnodes = np.array(wsmlnodes)
     wsmledges = np.array(wsmledges)
 
-    coms[:,1] = np.array(list(refcoms.values())[count*batchsize:((count+1)*batchsize)])[:,1]
+    #coms[:,1] = np.array(list(refcoms.values())[count*batchsize:((count+1)*batchsize)])[:,1]
+    coms[:,1] = np.array(list(refcoms.values()))[:,1]
     for i in range(2, comlen):
         results = model.predict([tdats, sdats, coms, wsmlnodes, wsmledges], batch_size=batchsize)
         for c, s in enumerate(results):
@@ -120,8 +124,10 @@ def gendescr_graphast(model, data, comstok, comlen, batchsize, config, refcoms, 
     coms = np.array(coms)
     wsmlnodes = np.array(wsmlnodes)
     wsmledges = np.array(wsmledges)
+    
 
-    coms[:,1] = np.array(list(refcoms.values())[count*batchsize:((count+1)*batchsize)])[:,1]
+    #coms[:,1] = np.array(list(refcoms.values())[count*batchsize:((count+1)*batchsize)])[:,1]
+    coms[:,1] = np.array(list(refcoms.values()))[:,1]
     for i in range(2, comlen):
         results = model.predict([tdats, coms, wsmlnodes, wsmledges], batch_size=batchsize)
         for c, s in enumerate(results):
@@ -142,7 +148,10 @@ def gendescr_pathast(model, data, comstok, comlen, batchsize, config, refcoms, c
     sdats = np.array(sdats)
     wsmlpaths = np.array(wsmlpaths)
 
-    coms[:,1] = np.array(list(refcoms.values())[count*batchsize:((count+1)*batchsize)])[:,1]
+    print('refcoms len:', len(refcoms))
+    print('coms len:', coms.shape)
+    #coms[:,1] = np.array(list(refcoms.values())[count*batchsize:((count+1)*batchsize)])[:,1]
+    coms[:,1] = np.array(list(refcoms.values()))[:,1]
     for i in range(2, comlen):
         if(config['use_sdats']):
             results = model.predict([tdats, sdats, coms, wsmlpaths], batch_size=batchsize)
@@ -165,7 +174,8 @@ def gendescr_threed(model, data, comstok, comlen, batchsize, config, refcoms, co
     sdats = np.array(sdats)
     coms = np.array(coms)
 
-    coms[:,1] = np.array(list(refcoms.values())[count*batchsize:((count+1)*batchsize)])[:,1]
+    #coms[:,1] = np.array(list(refcoms.values())[count*batchsize:((count+1)*batchsize)])[:,1]
+    coms[:,1] = np.array(list(refcoms.values()))[:,1]
     for i in range(2, comlen):
         results = model.predict([tdats, sdats, coms], batch_size=batchsize)
         for c, s in enumerate(results):
@@ -295,7 +305,7 @@ if __name__ == '__main__':
     prep("computing predictions...\n")
     for c, fid_set in enumerate(batch_sets):
         st = timer()
-        
+        refcoms = {}    
         for fid in fid_set:
             refcoms[fid] = seqdata['c'+testval][fid]
             seqdata['c'+testval][fid] = comstart #np.asarray([stk])
@@ -312,10 +322,22 @@ if __name__ == '__main__':
         elif config['batch_maker'] == 'threed':
             batch_results = gendescr_threed(model, batch, comstok, comlen, batchsize, config, refcoms, c, strat='greedy')
         elif config['batch_maker'] == 'graphast':
+            badfids = batch[1]
+            batch = batch[0]
+            for fid in badfids:
+                refcoms.pop(fid)
             batch_results = gendescr_graphast(model, batch, comstok, comlen, batchsize, config, refcoms, c, strat='greedy')
         elif config['batch_maker'] == 'graphast_threed':
+            badfids = batch[1]
+            batch = batch[0]
+            for fid in badfids:
+                refcoms.pop(fid)
             batch_results = gendescr_5inp(model, batch, comstok, comlen, batchsize, config, refcoms, c, strat='greedy')
         elif config['batch_maker'] == 'pathast_threed':
+            badfids=batch[1]
+            batch = batch[0]
+            for fid in badfids:
+                refcoms.pop(fid)
             batch_results = gendescr_pathast(model, batch, comstok, comlen, batchsize, config, refcoms, c, strat='greedy')
         else:
             print('error: invalid batch maker')
